@@ -1,5 +1,6 @@
 #include <GL/glut.h>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include "HNode.hpp"
 #include <cmath>
@@ -44,35 +45,101 @@ HNode *handle_connect_with_frame, *handle_connect_front_wheel_across,
       *handlebar_connector, *handlebar_connector_across, *handlebar_left, *handlebar_right;
 
 //static variables
-  float wheel_outer_radius = 24;
-  float wheel_tyre_radius = 1;
-  float bar_radius = 2;
-  float handlebar_connector_across_length = 23;
-  float handlebar_connector_length = 15;
-  float spoke_length = 21;
-  float spoke_radius = 0.3;
-  float extra_spoke_length = 2;
-  float extra_spoke_radius = 0.4;
-  float handle_connect_with_frame_length = 23;
-  float handle_connect_front_wheel_across_length = 8;
+  float wheel_outer_radius;// = 24;
+  float wheel_tyre_radius;// = 1;
+  float bar_radius;// = 2;
+  float handlebar_connector_across_length;// = 23;
+  float handlebar_connector_length;// = 15;
+  float spoke_length;// = 21;
+  float spoke_radius;// = 0.3;
+  float extra_spoke_length;// = 2;
+  float extra_spoke_radius;// = 0.4;
+  float handle_connect_with_frame_length;// = 23;
+  float handle_connect_front_wheel_across_length;// = 8;
   float handle_connect_front_wheel_length = wheel_outer_radius + bar_radius + 0.5;
-  float handlebar_handle_length = 10;
+  float handlebar_handle_length;// = 10;
   float wheel_axis_length = handle_connect_front_wheel_across_length - 2*bar_radius;
 
-  float frame_upper_horizontal_len = 50;  //123
-  float frame_lower_horizontal_len = 55;
-  float frame_right_vertical_len = 48;
-  float frame_upper_right_horizontal_len = 40;
-  float frame_lower_right_horizontal_len = 35;
-  float outer_gear_inRadius = 1;
-  float inner_gear_radius = 1.5;
+  float frame_upper_horizontal_len;// = 50;  //123
+  float frame_lower_horizontal_len;// = 55;
+  float frame_right_vertical_len;// = 48;
+  float frame_upper_right_horizontal_len;// = 40;
+  float frame_lower_right_horizontal_len;// = 35;
+  float outer_gear_inRadius ;//= 1;
+  float inner_gear_radius ;//= 1.5;
 
-  float axle_length = 8;
-  float across_gear_length = 4;
+  float axle_length ;//= 8;
+  float across_gear_length;// = 4;
 
-  float room_height = 300;
-  float room_breadth = 600;
-  float room_length = 400;
+  float room_height;// = 300;
+  float room_breadth ;//= 600;
+  float room_length;// = 400;
+
+  float ceiling_lamp_connector_base;// = 10;
+  float ceiling_lamp_connector_height;// = 20;
+  float ceiling_lamp_top;// = 30;
+  float ceiling_lamp_height;// = 20;
+
+  float photoframe_inradius ;//= 3.50;
+  float photoframe_outradius ;//= 50;
+
+  float headlight_cylinder_base ;//= 2;
+  float headlight_cylinder_top;// = 4;
+  float headlight_cylinder_height;// = 7;
+
+void set_static_variables(string filename){
+  string variable_name;
+  ifstream static_variables(filename);
+  if (static_variables.is_open())
+  {
+    static_variables>>wheel_outer_radius;
+    static_variables>>wheel_tyre_radius;
+    static_variables>>bar_radius;
+    static_variables>>handlebar_connector_across_length;
+    static_variables>>handlebar_connector_length;
+    static_variables>>spoke_length;
+    static_variables>>spoke_radius;
+    static_variables>>extra_spoke_length;
+    static_variables>>extra_spoke_radius;
+    static_variables>>handle_connect_with_frame_length;
+    static_variables>>handle_connect_front_wheel_across_length;
+    // static_variables>>handle_connect_front_wheel_length;
+    handle_connect_front_wheel_length = wheel_outer_radius + bar_radius + 0.5;
+    static_variables>>handlebar_handle_length;
+    wheel_axis_length = handle_connect_front_wheel_across_length - 2*bar_radius;
+
+    static_variables>>frame_upper_horizontal_len;
+    static_variables>>frame_lower_horizontal_len;
+    static_variables>>frame_right_vertical_len;
+    static_variables>>frame_upper_right_horizontal_len;
+    static_variables>>frame_lower_right_horizontal_len;
+    static_variables>>outer_gear_inRadius;
+    static_variables>>inner_gear_radius;
+    static_variables>>axle_length;
+    static_variables>>across_gear_length;
+    static_variables>>room_height;
+    static_variables>>room_breadth;
+    static_variables>>room_length;
+
+    static_variables>>ceiling_lamp_connector_base;
+    static_variables>>ceiling_lamp_connector_height;
+    static_variables>>ceiling_lamp_top;
+    static_variables>>ceiling_lamp_height;
+
+    static_variables>>photoframe_inradius;
+    static_variables>>photoframe_outradius;
+
+    static_variables>>headlight_cylinder_base;
+    static_variables>>headlight_cylinder_top;
+    static_variables>>headlight_cylinder_height;
+
+    static_variables.close();
+  }
+
+  else cout << "Unable to open file"; 
+
+  return;
+}
 
 //dynamic variables  
   float handle_rotation = 0;
@@ -89,24 +156,148 @@ HNode *handle_connect_with_frame, *handle_connect_front_wheel_across,
 
   int camera = 1;
 
+
 //lighting and shading
   GLfloat light0_position[] = { room_length/2, room_height-30, 0, 1};
   GLfloat light0_diffuse[] = {0.8,0.8,0.8};
   GLfloat light0_specular[] = {1,1,1};
   GLfloat light0_ambient[] = {0.4,0.4,0.4};
-  bool l0_status;
+  bool l0_status = 1;;
   //GLfloat light1_position[] = { room_length/2, room_height-30, 0, 1};
   GLfloat light1_position[] = { 0,0, 0, 1};
   GLfloat light1_diffuse[] = {0.8,0.8,0.8};
   GLfloat light1_specular[] = {1,1,1};
   GLfloat light1_ambient[] = {0.4,0.4,0.4};
   GLfloat spot_direction[] = { -1.0, -1.0, 0.0 };
-  bool l1_status;
+  bool l1_status = 1;
+
+int is_playback_active = 0; 
+float keyframe_data1[15];
+float keyframe_data2[15];
+float keyframe_data[15];
+bool enable_recording = 0;
+int keyframe_number = 0;
+int number_of_interpolating_frames = 25;
+
+void save_line(bool enable){
+  if (!enable) return;
+  ofstream keyframe("keyframes.txt",std::ios_base::app);
+  keyframe_number++;
+  keyframe<<keyframe_number<<" ";                   //0
+  keyframe<< handle_connect_with_frame->rz<<" ";    //1
+  keyframe<< wheel_back->rz<<" ";                   //2
+  keyframe<< wheel_front->rz<<" ";                  //3
+  keyframe<< gear[0]->rz<<" ";                      //4
+  keyframe<< wheel_axis_b->tx<<" ";                 //5
+  keyframe<< wheel_axis_b->tz<<" ";                 //6
+  keyframe<< wheel_axis_b->ry<<" ";                 //7
+  keyframe<<camera<<" ";                            //8
+  keyframe<<l0_status<<" ";                         //9
+  keyframe<<l1_status<<" ";                         //10
+  keyframe<<number_of_interpolating_frames<<" ";         //11
+  keyframe<<number_of_interpolating_frames<< " ";         //12
+  keyframe<<number_of_interpolating_frames<< " ";         //13
+  keyframe<<number_of_interpolating_frames<<endl;         //14
+  keyframe.close();
+  cout<<"Line saved\n";
+  //keyframe<< <<endl;
+  return;
+}
+
+void clear_file(){
+  ofstream keyframe("keyframes.txt");
+  keyframe.close();
+  cout<<"Keyframes cleared\n";
+  keyframe_number = 0;
+  return;
+}
+
+bool first_frame = 1;
+int current_frame = 0;
+bool update = 0;
+
+ifstream keyframes_playback;
+
+void replay_animation(){
+  if(!is_playback_active) return;
+  // cout<<"In glutIdleFunc\n";
+  //setup the consecutive keyframes to interpolate between
+  if(first_frame){
+    update = 0;
+    for (int i=0; i<15; i++){
+      keyframes_playback>>keyframe_data1[i];
+    }
+    for (int i=0; i<15; i++){
+      keyframes_playback>>keyframe_data2[i];
+    }
+    first_frame = 0;
+    update = 1;
+    // cout<<"First 2 frames read\n";
+  } else if (current_frame == keyframe_data1[14]){
+    update = 0;
+    cout<<"Reading next frame\n";
+    current_frame = 0;
+    if(keyframes_playback>>keyframe_data1[0]){
+      cout<<keyframe_data1[0]<<endl; 
+      for (int i=1; i<15; i++){
+        keyframe_data1[i] = keyframe_data2[i];
+        keyframes_playback>>keyframe_data2[i];
+        cout<<keyframe_data2[i]<<" ";
+      }
+      cout<<endl;
+      update = 1;
+    }
+    else {
+    is_playback_active = 0;       //stop playback
+    keyframes_playback.close(); 
+    cout<<"Playback complete\n"; 
+    return;
+    }  
+  }
+
+  for(int i=0; i<8; i++){
+    keyframe_data[i] = keyframe_data1[i]*(1 - float(current_frame)/keyframe_data1[14])
+                         + keyframe_data2[i]*float(current_frame)/keyframe_data1[14];
+  }
+  // cout<<"Interpolation done\n";
+  if(l0_status!=keyframe_data1[9]){
+    if(keyframe_data1[9]) glEnable(GL_LIGHT0);
+    else glDisable(GL_LIGHT0);
+  }
+  if(l0_status!=keyframe_data1[10]){
+    if(keyframe_data1[10]) glEnable(GL_LIGHT1);
+    else glDisable(GL_LIGHT1);
+  }
+  //camera = keyframe_data1[8];
+  // cout<<camera<<" camera"<<endl;
+  //glutTimerFunc(40, update_dynamic_variables, is_playback_active);
+  glutPostRedisplay();
+}
+
+void update_dynamic_variables(int){
+  // cout<<"blah\n";
+  if(update != 0) {
+    handle_connect_with_frame->rz = keyframe_data[1];
+    wheel_back->rz = keyframe_data[2];
+    wheel_front->rz = keyframe_data[3];
+    gear[0]->rz = keyframe_data[4];
+    wheel_axis_b->tx = keyframe_data[5];
+    wheel_axis_b->tz = keyframe_data[6];
+    wheel_axis_b->ry = keyframe_data[7];
+    camera = keyframe_data1[8];
+    l0_status = keyframe_data1[9];
+    l1_status = keyframe_data1[10];
+    current_frame++;
+    // cout<<current_frame<<" "<<keyframe_data1[14]<< endl;
+  }
+  glutTimerFunc(40, update_dynamic_variables, is_playback_active);
+  // return;
+}
 
 //Our function for processing ASCII keys
 void processNormalKeys(unsigned char key, int x, int y) {
   switch(key) {
-    case 'X':
+    case 'X': 
       glRotatef(1,1,0,0);
       break;
     case 'Y':
@@ -142,6 +333,23 @@ void processNormalKeys(unsigned char key, int x, int y) {
       break;
     case '3':
       camera = 3;
+      break;
+    case 'R':
+      enable_recording = !enable_recording;
+      if(enable_recording) cout<<"Recording mode ON"<<endl;
+      else cout<<"Recording mode OFF"<<endl;
+      break;
+    case 'S':
+      save_line(enable_recording);
+      break;
+    case 'C':
+      clear_file();
+      break;
+    case 'P':
+      is_playback_active = !is_playback_active;
+      current_frame = 0;
+      first_frame = 1;
+      keyframes_playback.open("keyframes.txt");
       break;
   }
   glutPostRedisplay();
@@ -271,6 +479,7 @@ void init(void){
 int main(int argc, char **argv)
 {
 
+  set_static_variables("static_variables.txt");
   // of the first node - vetical cylinder containing the front handle
   node[0] = new HNode(NULL);
   node[1] = new HNode(NULL);
@@ -353,28 +562,28 @@ int main(int argc, char **argv)
   ceiling_lamp_connector->add_child(ceiling_lamp);
 
   ceiling_lamp_connector->obj_type = 0;
-  ceiling_lamp_connector->base=10;
-  ceiling_lamp_connector->top=10;
-  ceiling_lamp_connector->height=20;
+  ceiling_lamp_connector->base=ceiling_lamp_connector_base;
+  ceiling_lamp_connector->top=ceiling_lamp_connector_base;
+  ceiling_lamp_connector->height=ceiling_lamp_connector_height;
   ceiling_lamp_connector->slices=4;
   ceiling_lamp_connector->stacks=10;
   ceiling_lamp_connector->change_parameters(room_length/2, room_height/2, 0, 0,0,0);
   ceiling_lamp_connector->set_color(0,0,0);  
 
   ceiling_lamp->obj_type = 0;
-  ceiling_lamp->base=10;
-  ceiling_lamp->top=30;
-  ceiling_lamp->height=20;
+  ceiling_lamp->base=ceiling_lamp_connector_base;
+  ceiling_lamp->top=ceiling_lamp_top;
+  ceiling_lamp->height=ceiling_lamp_height;
   ceiling_lamp->slices=4;
   ceiling_lamp->stacks=10;
-  ceiling_lamp->change_parameters(0,0,20,0,0,0);
+  ceiling_lamp->change_parameters(0,0,ceiling_lamp_connector_height,0,0,0);
   ceiling_lamp->set_color(0.7,0.7,0.7);
 
   ceiling_lamp_backcover->obj_type = 5;
-  ceiling_lamp_backcover->length = 14.14;
-  ceiling_lamp_backcover->height = 14.14;
+  ceiling_lamp_backcover->length = sqrt(2)*ceiling_lamp_connector_base;
+  ceiling_lamp_backcover->height = sqrt(2)*ceiling_lamp_connector_base;
   ceiling_lamp_backcover->slices = 1;
-  ceiling_lamp_backcover->change_parameters(0,0,20,0,0,0);
+  ceiling_lamp_backcover->change_parameters(0,0,ceiling_lamp_connector_height,0,0,0);
 
   room[1]->obj_type = 4;  //floor
   float floor_vertices[12] = {0,0,0, room_length,0,0, room_length,0,room_breadth, 0,0,room_breadth};
@@ -402,8 +611,8 @@ int main(int argc, char **argv)
     photoframe = new HNode(NULL);
     room[3]->add_child(photoframe);
     photoframe->obj_type = 2;
-    photoframe->inRadius = 3.50;
-    photoframe->outRadius = 50;
+    photoframe->inRadius = photoframe_inradius;
+    photoframe->outRadius = photoframe_outradius;
     photoframe->nsides=10;  
     photoframe->rings=4;
     photoframe->change_parameters(room_length/2, room_height/2, 0, 0, 0, 45);
@@ -434,9 +643,9 @@ int main(int argc, char **argv)
 
 //headlight
   headlight_cylinder->obj_type = 0;
-  headlight_cylinder->base=2;
-  headlight_cylinder->top=4;
-  headlight_cylinder->height=7;
+  headlight_cylinder->base=headlight_cylinder_base;
+  headlight_cylinder->top=headlight_cylinder_top;
+  headlight_cylinder->height=headlight_cylinder_height;
   headlight_cylinder->slices=50;
   headlight_cylinder->stacks=10;
   headlight_cylinder->change_preparameters(handle_connect_with_frame_length/4,0,0);
@@ -877,6 +1086,8 @@ int main(int argc, char **argv)
   glutKeyboardFunc(processNormalKeys);
   glutSpecialFunc(processSpecialKeys);
   init();
+  glutTimerFunc(40, update_dynamic_variables, 0);
+  glutIdleFunc(replay_animation);
   glutMainLoop();
   return 0;
 }
