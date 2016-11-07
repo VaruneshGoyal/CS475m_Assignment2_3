@@ -282,6 +282,11 @@ void HNode::render(){
   }
 }
 
+void HNode::rotate_z(){
+  rz++;
+  if(rz>360){rz-=360;}
+}
+
 void HNode::set_color(float R, float G, float B){
   this->R = R;
   this->G = G;

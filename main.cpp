@@ -351,6 +351,9 @@ void processNormalKeys(unsigned char key, int x, int y) {
       first_frame = 1;
       keyframes_playback.open("keyframes.txt");
       break;
+    case 'A':
+    	handle_connect_with_frame->rotate_z();
+    	break;
   }
   glutPostRedisplay();
   if (key == 27)

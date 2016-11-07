@@ -60,6 +60,7 @@ public:
   // void (*render_function)();
 
   int loadBMP_custom(const char * imagepath);
+  void rotate_z();
   
 };
 
